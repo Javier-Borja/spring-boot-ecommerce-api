@@ -25,20 +25,23 @@ public class ProductController {
 
     // método para obtener todos los productos
     @GetMapping
-    public ResponseEntity<ApiResponse<ProductDTO>> getAllProducts(
+    public Mono<ResponseEntity<ApiResponse<ProductDTO>>> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit
     ) {
-        List<ProductDTO> allProducts = productService.getAllProduct().collectList().block();
-        ApiResponse<ProductDTO> response = paginationService.createPaginatedResponse(allProducts, page, limit);
-        return ResponseEntity.ok(response);
+        return productService.getAllProduct()
+                .collectList()
+                .map(allProducts -> {
+                    ApiResponse<ProductDTO> response = paginationService.createPaginatedResponse(allProducts, page, limit);
+                    return ResponseEntity.ok(response);
+                });
     }
 
     // método para obtener un producto por su id
     @GetMapping("/{id}")
-    public Mono<ResponseEntity<ProductDTO>> getProductById(@PathVariable Integer id){
+    public Mono<ResponseEntity<ProductDTO>> getProductById(@PathVariable Integer id) {
         return productService.getProductById(id)
-                .map(ResponseEntity:: ok)
+                .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 }
