@@ -12,9 +12,7 @@ public class ConfigWebClient {
     @Bean
     WebClient webClient(){
         return WebClient.builder()
-                .baseUrl("https://fakestoreapi.com")
-                .defaultHeader("User-Agent", "Mozilla/5.0")
-                .defaultHeader("Accept", "application/json")
+                .baseUrl(API_FAKE_STORE)
                 .build();
     }
 }
